@@ -64,7 +64,7 @@ public class RequestHandlerTest {
         Request secondAdd = new RequestBuilder()
                 .userId(userId)
                 .addTags("a")
-                .timestamp(timestamp.minus(10, ChronoUnit.NANOS))
+                .timestamp(timestamp.minus(10, ChronoUnit.MILLIS))
                 .build();
         Response secondAddResponse = makeRequest(secondAdd);
         Assertions.assertTrue(secondAddResponse.getTags().contains("a"));
@@ -72,7 +72,7 @@ public class RequestHandlerTest {
         Request remove = new RequestBuilder()
                 .userId(userId)
                 .removeTags("a")
-                .timestamp(timestamp.minus(5, ChronoUnit.NANOS))
+                .timestamp(timestamp.minus(5, ChronoUnit.MILLIS))
                 .build();
         Response removeResponse = makeRequest(remove);
         Assertions.assertTrue(removeResponse.getTags().contains("a"));

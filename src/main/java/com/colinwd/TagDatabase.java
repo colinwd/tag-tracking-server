@@ -1,6 +1,7 @@
 package com.colinwd;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 class TagDatabase {
@@ -41,21 +42,7 @@ class TagDatabase {
     }
 
     void add(Tag tag) {
-        String userId = tag.getUserId();
-        createUserIfNotExists(userId);
-        Set<Tag> userTags = getAllTagsFor(userId);
-
-        if (userTags.contains(tag)) {
-            //replace only if timestamp is newer
-            boolean removed = userTags.removeIf(t -> Objects.equals(t, tag) && t.isBefore(tag));
-            if (removed) {
-                tag.setAction(Action.ADD);
-                put(userId, tag);
-            }
-        } else {
-            tag.setAction(Action.ADD);
-            put(userId, tag);
-        }
+        update(tag, Action.ADD, t -> Objects.equals(t, tag) && t.isBefore(tag));
     }
 
     void remove(Collection<Tag> tagsToRemove) {
@@ -63,23 +50,27 @@ class TagDatabase {
     }
 
     void remove(Tag tag) {
-        String userId = tag.getUserId();
-        createUserIfNotExists(userId);
-        Set<Tag> userTags = getAllTagsFor(userId);
-        if (userTags.contains(tag)) {
-            boolean removed = userTags.removeIf(t -> Objects.equals(t, tag) && t.isBeforeOrEqual(tag));
-            if (removed) {
-                tag.setAction(Action.REMOVE);
-                put(userId, tag);
-            }
-        } else {
-            tag.setAction(Action.REMOVE);
-            put(userId, tag);
-        }
+        update(tag, Action.REMOVE, t -> Objects.equals(t, tag) && t.isBeforeOrEqual(tag));
     }
 
     void clear() {
         tagDb = new HashMap<>();
+    }
+
+    private void update(Tag tag, Action action, Predicate<Tag> predicate) {
+        String userId = tag.getUserId();
+        createUserIfNotExists(userId);
+        Set<Tag> userTags = getAllTagsFor(userId);
+        if (userTags.contains(tag)) {
+            boolean removed = userTags.removeIf(predicate);
+            if (removed) {
+                tag.setAction(action);
+                put(userId, tag);
+            }
+        } else {
+            tag.setAction(action);
+            put(userId, tag);
+        }
     }
 
     private void put(String userId, Tag tag) {
