@@ -3,7 +3,7 @@ package com.colinwd;
 import java.time.Instant;
 import java.util.Objects;
 
-public class Tag {
+public class Tag implements Comparable<Tag> {
     private String userId;
     private Instant timestamp;
     private String tag;
@@ -55,5 +55,10 @@ public class Tag {
     @Override
     public int hashCode() {
         return Objects.hash(userId, tag);
+    }
+
+    @Override
+    public int compareTo(Tag o) {
+        return this.getTimestamp().compareTo(o.getTimestamp());
     }
 }

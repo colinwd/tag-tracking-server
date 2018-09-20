@@ -1,7 +1,11 @@
 package com.colinwd.client;
 
+import com.colinwd.Request;
+import com.colinwd.RequestBuilder;
+
 import java.io.*;
 import java.net.Socket;
+import java.time.Instant;
 
 public class TestClient implements Closeable {
 
@@ -25,5 +29,9 @@ public class TestClient implements Closeable {
         in.close();
         out.close();
         socket.close();
+    }
+
+    public static Request testRequest() {
+        return new RequestBuilder().userId("Colin").addTags("timbers_army").timestamp(Instant.now()).build();
     }
 }

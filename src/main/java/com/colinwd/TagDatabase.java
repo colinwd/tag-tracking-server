@@ -1,6 +1,8 @@
 package com.colinwd;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -8,7 +10,7 @@ class TagDatabase {
 
     private static TagDatabase instance;
 
-    private Map<String, Set<Tag>> tagDb = new HashMap<>();
+    private Map<String, Set<Tag>> tagDb = new ConcurrentHashMap<>();
 
     private TagDatabase() {
     }
@@ -82,13 +84,13 @@ class TagDatabase {
         if (tagDb.containsKey(userId)) {
             return tagDb.get(userId);
         } else {
-            return new HashSet<>();
+            return new ConcurrentSkipListSet<>();
         }
     }
 
     private void createUserIfNotExists(String userId) {
         if (!userExists(userId)) {
-            tagDb.put(userId, new HashSet<>());
+            tagDb.put(userId, new ConcurrentSkipListSet<>());
         }
     }
 

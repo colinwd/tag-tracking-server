@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Arrays;
+import java.util.List;
 
 public class RequestBuilder {
 
@@ -23,8 +24,18 @@ public class RequestBuilder {
         return this;
     }
 
+    public RequestBuilder addTags(List<String> tags) {
+        this.request.setAdd(tags);
+        return this;
+    }
+
     public RequestBuilder removeTags(String... remove) {
         this.request.setRemove(Arrays.asList(remove));
+        return this;
+    }
+
+    public RequestBuilder removeTags(List<String> tags) {
+        this.request.setRemove(tags);
         return this;
     }
 
