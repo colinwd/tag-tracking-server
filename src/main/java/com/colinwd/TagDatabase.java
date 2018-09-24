@@ -1,5 +1,7 @@
 package com.colinwd;
 
+import com.google.common.collect.Sets;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -27,7 +29,7 @@ class TagDatabase {
         if (tagDb.containsKey(userId)) {
             return tagDb.get(userId).stream().filter(t -> t.getAction() == Action.ADD).collect(Collectors.toSet());
         } else {
-            return new HashSet<>();
+            return Sets.newConcurrentHashSet();
         }
     }
 
@@ -35,7 +37,7 @@ class TagDatabase {
         if (tagDb.containsKey(userId)) {
             return getTagsFor(userId).stream().map(Tag::getTag).collect(Collectors.toSet());
         } else {
-            return new HashSet<>();
+            return Sets.newConcurrentHashSet();
         }
     }
 
@@ -84,13 +86,13 @@ class TagDatabase {
         if (tagDb.containsKey(userId)) {
             return tagDb.get(userId);
         } else {
-            return new ConcurrentSkipListSet<>();
+            return Sets.newConcurrentHashSet();
         }
     }
 
     private void createUserIfNotExists(String userId) {
         if (!userExists(userId)) {
-            tagDb.put(userId, new ConcurrentSkipListSet<>());
+            tagDb.put(userId, Sets.newConcurrentHashSet());
         }
     }
 
