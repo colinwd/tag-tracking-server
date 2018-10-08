@@ -2,18 +2,21 @@ use std::io;
 use std::io::{Read, Write, BufRead};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
+use bufstream::BufStream;
 
 extern crate bufstream;
 
-fn handle_client(mut stream: TcpStream) -> io::Result<()> {
-    let mut buf = [0; 1024];
+fn handle_client(stream: TcpStream) -> io::Result<()> {
+    let mut buf = [0; 1024].to_vec();
+    println!("Handling connection from {}", stream.peer_addr()?);
+    let mut stream = BufStream::new(stream);
 
     loop {
-        println!("Handling connection from {}", stream.peer_addr()?);
-        match stream.read(&mut buf) {
+        match stream.read_until(0x0A, &mut buf) {
             Ok(b) => {
                 println!("Read {} bytes", b);
                 stream.write_all(&buf)?;
+                stream.flush();
                 break;
             }
             Err(e) => panic!("IO Error: {}", e)
